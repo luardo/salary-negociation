@@ -1,6 +1,6 @@
 <template>
   <div class="modal">
-    <div class="modal__header">x</div>
+    <div class="modal__header"><span class="modal__close" @click="close()">x</span></div>
     <h2>{{ text }}</h2>
   </div>
 </template>
@@ -8,7 +8,12 @@
 <script>
 export default {
   name: 'Modal',
-  props: ['text']
+  props: ['text'],
+  methods: {
+    close () {
+      this.$emit('close', true)
+    }
+  }
 }
 </script>
 
@@ -28,6 +33,10 @@ export default {
     &__header {
       text-align: right;
       font-weight: bold;
+    }
+
+    &__close {
+      font-size: 1.5em;
     }
   }
 </style>

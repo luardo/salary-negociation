@@ -1,32 +1,45 @@
 <template>
-  <div class="form-container">
-    <div class="form-container__header">
-      <div class="form-container__tab"
-           v-bind:class="{ active : showEmployerForm }"
-           @click="showEmployerForm = true">
-        Employer Tab
+  <div>
+    <div class="form-container" v-if="!displayWeather">
+      <div class="form-container__header">
+        <div class="form-container__tab"
+             v-bind:class="{ 'form-container__tab--active' : showEmployerForm }"
+             @click="showEmployerForm = true">
+          Employer
+        </div>
+        <div class="form-container__tab"
+             v-bind:class="{ 'form-container__tab--active' : !showEmployerForm }"
+             @click="showEmployerForm = false">
+          Candidate
+        </div>
       </div>
-      <div class="form-container__tab"
-           v-bind:class="{ active : !showEmployerForm }"
-           @click="showEmployerForm = false">
-        Employee Tab
+
+      <div class="form-container__content">
+        <SimpleForm title="How much do you want?" v-if="!showEmployerForm" :key="1"
+              v-on:amountSelected="onCandidateSalarySubmitted">
+        </SimpleForm>
+
+        <SimpleForm title="How much can you pay?" v-if="showEmployerForm" :key="2"
+              v-on:amountSelected="onEmployerSalarySubmitted">
+        </SimpleForm>
       </div>
-    </div>
-    <div class="form-container__content">
 
-      <SimpleForm title="How much do you want?" v-if="!showEmployerForm" :key="1"
-            v-on:amountSelected="onCandidateSalarySubmitted($event)"></SimpleForm>
-      <SimpleForm title="How much can you pay?" v-if="showEmployerForm" :key="2"
-            v-on:amountSelected="onEmployerSalarySubmitted($event)"></SimpleForm>
+      <Modal v-if="showResult" :text="resultMessage" v-on:close="onModalClose"></Modal>
     </div>
 
-    <Modal v-if="showResult" :text="successMessage"></Modal>
+    <div v-if="displayWeather">
+      <h2> Have a nice day in London</h2>
+
+      <h3> {{ currentWeather }} °C</h3>
+    </div>
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator'
+import { mixins } from 'vue-class-component'
+import { Component } from 'vue-property-decorator'
 import SimpleForm from './SimpleForm.vue'
+import { WeatherService } from '../mixins/WeatherService'
 import Modal from './Modal.vue'
 
 @Component({
@@ -35,12 +48,18 @@ import Modal from './Modal.vue'
     Modal
   }
 })
-export default class SalaryForm extends Vue {
+export default class SalaryForm extends mixins(WeatherService) {
     showEmployerForm = true;
+    displayWeather = false;
     candidateSalary = 0;
     employerSalary = 0;
+    currentWeather = {};
 
-    get showResult () {
+    beforeMount (): void {
+      this.getWeather()
+    }
+
+    get showResult (): boolean {
       return !!this.candidateSalary && !!this.employerSalary
     }
 
@@ -48,9 +67,24 @@ export default class SalaryForm extends Vue {
       return this.candidateSalary <= this.employerSalary
     }
 
-    get successMessage (): string {
+    get resultMessage (): string {
       return this.isSuccess ? 'Congratulation, we have a deal'
         : 'We are sorry, unfortunately there are other candidate with a more fitting profile. Good luck next time'
+    }
+
+    async getWeather () {
+      try {
+        const { data: { main: { temp } } } = await this.getByCity('london')
+        this.currentWeather = Math.floor(temp)
+      } catch (ex) {
+        console.log(ex)
+      }
+    }
+
+    onModalClose () {
+      this.displayWeather = true
+      this.candidateSalary = 0
+      this.employerSalary = 0
     }
 
     onCandidateSalarySubmitted (e: number): void {
@@ -65,7 +99,6 @@ export default class SalaryForm extends Vue {
 </script>
 
 <style lang="scss" scoped>
-$background: rgba(76,138,185,0.63);
 .form-container {
   height: 100vh;
   width: 100%;
@@ -81,16 +114,17 @@ $background: rgba(76,138,185,0.63);
 
   &__tab {
     font-weight: bold;
-    background: none;
-    color: #222222;
     padding: 30px;
     flex-grow: 1;
-    border: 1px solid #222222;
-    border-bottom: none;
+    border: none;
 
-    &.active {
-      background: #222222;
-      color: white;
+    background: #222222;
+    color: white;
+
+    &--active {
+      color: #222222;
+      background: none;
+
     }
   }
 

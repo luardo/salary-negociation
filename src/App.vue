@@ -17,7 +17,7 @@ export default class App extends Vue {}
 </script>
 
 <style lang="scss">
-  $background: rgba(76, 138, 185, 0.63);
+  $background: rgba(32, 0, 109, 0.63);
 
   body {
     margin: 0;

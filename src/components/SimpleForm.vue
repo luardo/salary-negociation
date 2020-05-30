@@ -1,7 +1,8 @@
 <template>
   <form class="simple-form"  @submit="onSubmit">
-    <h2>{{ title }}</h2>
-    <input class="simple-form__input" type="number" placeholder="Brutto per Year in Euro " v-model="amount"/>
+    <label class="simple-form__label">{{ title }}
+      <input class="simple-form__input" type="number" placeholder="Brutto per Year in Euro " v-model="amount"/>
+    </label>
     <button class="simple-form__button" :disabled="!amount" type="submit">Submit</button>
 
   </form>
@@ -28,6 +29,14 @@ export default class SimpleForm extends Vue {
     display: flex;
     flex-direction: column;
 
+    &__label {
+      font-size: 18px;
+      font-weight: bold;
+      text-align: left;
+      margin-top: 20px;
+      margin-bottom: 20px;
+    }
+
     &__input {
       display: block;
       border: none;
@@ -35,6 +44,7 @@ export default class SimpleForm extends Vue {
       padding: 15px 20px;
       box-sizing:border-box;
       margin-bottom: 15px;
+      margin-top: 15px;
     }
     &__button {
 
