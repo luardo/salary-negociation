@@ -93,7 +93,7 @@ describe('SalaryForm.vue', () => {
     await wrapper.vm.onEmployerSalarySubmitted(200);
 
     // @ts-ignore
-    expect(wrapper.vm.resultMessage).toBe('Congratulation, we have a deal');
+    expect(wrapper.vm.resultMessage).toBe('Success');
   })
 
   it('resultMessage to be Failed given Employer salary is Lower than candidate salary', async () => {
@@ -112,7 +112,7 @@ describe('SalaryForm.vue', () => {
     await wrapper.vm.onEmployerSalarySubmitted(120);
 
     // @ts-ignore
-    expect(wrapper.vm.resultMessage).toBe('We are sorry, unfortunately there are other candidate with a more fitting profile. Good luck next time');
+    expect(wrapper.vm.resultMessage).toBe('Failure');
   })
 
   it('showEmployerForm to be TRUE when app starts', async () => {

@@ -2,13 +2,19 @@
   <div class="modal">
     <div class="modal__header"><span class="modal__close" @click="close()">x</span></div>
     <h2>{{ text }}</h2>
+    <p>
+      <strong>Employers Offer:</strong> {{ employerOffer | currency }} <br/>
+      <strong>Candidate Expectation:</strong> {{ candidateExpectation | currency }}
+    </p>
+    <h5>Weather in London</h5>
+    <h3>{{ temp }}°C</h3>
   </div>
 </template>
 
 <script>
 export default {
   name: 'Modal',
-  props: ['text'],
+  props: ['text', 'temp', 'employerOffer', 'candidateExpectation'],
   methods: {
     close () {
       this.$emit('close', true)
@@ -37,6 +43,7 @@ export default {
 
     &__close {
       font-size: 1.5em;
+      cursor: pointer;
     }
   }
 </style>

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="form-container" v-if="!displayWeather">
+    <div class="form-container">
       <div class="form-container__header">
         <div class="form-container__tab"
              v-bind:class="{ 'form-container__tab--active' : showEmployerForm }"
@@ -24,13 +24,12 @@
         </SimpleForm>
       </div>
 
-      <Modal v-if="showResult" :text="resultMessage" v-on:close="onModalClose"></Modal>
-    </div>
-
-    <div v-if="displayWeather">
-      <h2> Have a nice day in London</h2>
-
-      <h3> {{ currentWeather }} °C</h3>
+      <Modal v-if="showResult"
+             :text="resultMessage"
+             :candidate-expectation="candidateSalary"
+             :employer-offer="employerSalary"
+             :temp="currentWeatherTemp" v-on:close="onModalClose">
+      </Modal>
     </div>
   </div>
 </template>
@@ -39,7 +38,7 @@
 import { mixins } from 'vue-class-component'
 import { Component } from 'vue-property-decorator'
 import SimpleForm from './SimpleForm.vue'
-import { WeatherService } from '../mixins/WeatherService'
+import { WeatherMixin } from '../mixins/WeatherMixin'
 import Modal from './Modal.vue'
 
 @Component({
@@ -48,12 +47,12 @@ import Modal from './Modal.vue'
     Modal
   }
 })
-export default class SalaryForm extends mixins(WeatherService) {
+export default class SalaryForm extends mixins(WeatherMixin) {
     showEmployerForm = true;
     displayWeather = false;
     candidateSalary = 0;
     employerSalary = 0;
-    currentWeather = {};
+    currentWeatherTemp = 0;
 
     beforeMount (): void {
       this.getWeather()
@@ -68,14 +67,14 @@ export default class SalaryForm extends mixins(WeatherService) {
     }
 
     get resultMessage (): string {
-      return this.isSuccess ? 'Congratulation, we have a deal'
-        : 'We are sorry, unfortunately there are other candidate with a more fitting profile. Good luck next time'
+      return this.isSuccess ? 'Success'
+        : 'Failure'
     }
 
     async getWeather () {
       try {
         const { data: { main: { temp } } } = await this.getByCity('london')
-        this.currentWeather = Math.floor(temp)
+        this.currentWeatherTemp = Math.floor(temp)
       } catch (ex) {
         console.log(ex)
       }
@@ -106,6 +105,8 @@ export default class SalaryForm extends mixins(WeatherService) {
   justify-content: center;
   flex-direction: column;
   padding: 30px;
+  max-width: 640px;
+  margin: 0 auto;
 
   &__header {
     display: flex;
@@ -117,14 +118,13 @@ export default class SalaryForm extends mixins(WeatherService) {
     padding: 30px;
     flex-grow: 1;
     border: none;
-
-    background: #222222;
-    color: white;
+    background: none;
+    color: #222222;
 
     &--active {
-      color: #222222;
-      background: none;
+      color: white;
 
+      border-bottom: 3px solid white;
     }
   }
 

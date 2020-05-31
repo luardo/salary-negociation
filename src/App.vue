@@ -7,6 +7,9 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator'
 import SalaryForm from './components/SalaryForm.vue'
+import Vue2Filters from 'vue2-filters'
+
+Vue.use(Vue2Filters)
 
 @Component({
   components: {
