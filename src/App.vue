@@ -20,17 +20,20 @@ export default class App extends Vue {}
 </script>
 
 <style lang="scss">
-  $background: rgba(32, 0, 109, 0.63);
+  $background: rgba(48, 117, 95, 0.63);
+  $fontFamily: Avenir, Helvetica, Arial, sans-serif;
+  $fontColor: #2c3e50;
+  $fontSize: 1em;
 
   body {
     margin: 0;
   }
   #app {
-    font-family: Avenir, Helvetica, Arial, sans-serif;
+    font-family: $fontFamily;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-align: center;
-    color: #2c3e50;
+    color: $fontColor;
     font-size: 1em;
     background: $background;
     box-sizing: border-box;

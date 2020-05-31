@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <div class="form-container">
+  <section>
+    <div class="form-container" v-if="showNegociationForm">
       <div class="form-container__header">
         <div class="form-container__tab"
              v-bind:class="{ 'form-container__tab--active' : showEmployerForm }"
@@ -15,12 +15,11 @@
       </div>
 
       <div class="form-container__content">
-        <SimpleForm title="How much do you want?" v-if="!showEmployerForm" :key="1"
-              v-on:amountSelected="onCandidateSalarySubmitted">
-        </SimpleForm>
-
-        <SimpleForm title="How much can you pay?" v-if="showEmployerForm" :key="2"
+        <SimpleForm title="Insert the position maximun budget: " v-if="showEmployerForm" :key="2"
               v-on:amountSelected="onEmployerSalarySubmitted">
+        </SimpleForm>
+        <SimpleForm title="Insert your expected salary: " v-if="!showEmployerForm" :key="1"
+                    v-on:amountSelected="onCandidateSalarySubmitted">
         </SimpleForm>
       </div>
 
@@ -31,7 +30,10 @@
              :temp="currentWeatherTemp" v-on:close="onModalClose">
       </Modal>
     </div>
-  </div>
+    <div v-if="!showNegociationForm">
+      <h2>Bye!!!</h2>
+    </div>
+  </section>
 </template>
 
 <script lang="ts">
@@ -49,6 +51,7 @@ import Modal from './Modal.vue'
 })
 export default class SalaryForm extends mixins(WeatherMixin) {
     showEmployerForm = true;
+    showNegociationForm = true;
     displayWeather = false;
     candidateSalary = 0;
     employerSalary = 0;
@@ -75,13 +78,13 @@ export default class SalaryForm extends mixins(WeatherMixin) {
       try {
         const { data: { main: { temp } } } = await this.getByCity('london')
         this.currentWeatherTemp = Math.floor(temp)
-      } catch (ex) {
-        console.log(ex)
+      } catch (err) {
+        console.log(err)
       }
     }
 
     onModalClose () {
-      this.displayWeather = true
+      this.showNegociationForm = false
       this.candidateSalary = 0
       this.employerSalary = 0
     }
@@ -98,14 +101,21 @@ export default class SalaryForm extends mixins(WeatherMixin) {
 </script>
 
 <style lang="scss" scoped>
+$padding: 30px;
+$maxWidth: 640px;
+$primaryColor: #222222;
+$secondaryColor: #FFFFFF;
+$borderSize: 3px;
+$contentMarginBottom: 60px;
+
 .form-container {
   height: 100vh;
   width: 100%;
   display: flex;
   justify-content: center;
   flex-direction: column;
-  padding: 30px;
-  max-width: 640px;
+  padding: $padding;
+  max-width:$maxWidth;
   margin: 0 auto;
 
   &__header {
@@ -115,21 +125,21 @@ export default class SalaryForm extends mixins(WeatherMixin) {
 
   &__tab {
     font-weight: bold;
-    padding: 30px;
+    padding: $padding;
     flex-grow: 1;
     border: none;
     background: none;
-    color: #222222;
+    color: $primaryColor;
 
     &--active {
-      color: white;
+      color: $secondaryColor;
 
-      border-bottom: 3px solid white;
+      border-bottom: $borderSize solid $secondaryColor;
     }
   }
 
   &__content {
-    margin-bottom: 60px;
+    margin-bottom: $contentMarginBottom;
   }
 }
 </style>

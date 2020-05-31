@@ -3,8 +3,8 @@
     <div class="modal__header"><span class="modal__close" @click="close()">x</span></div>
     <h2>{{ text }}</h2>
     <p>
-      <strong>Employers Offer:</strong> {{ employerOffer | currency }} <br/>
-      <strong>Candidate Expectation:</strong> {{ candidateExpectation | currency }}
+      <strong>Employers Offer:</strong> {{ employerOffer | currency('€', 0, currencySettings) }} <br/>
+      <strong>Candidate Expectation:</strong> {{ candidateExpectation | currency('€', 0, currencySettings) }}
     </p>
     <h5>Weather in London</h5>
     <h3>{{ temp }}°C</h3>
@@ -15,6 +15,15 @@
 export default {
   name: 'Modal',
   props: ['text', 'temp', 'employerOffer', 'candidateExpectation'],
+  data: () => {
+    return {
+      currencySettings: {
+        symbolOnLeft: false,
+        spaceBetweenAmountAndSymbol: true,
+        thousandsSeparator: '.'
+      }
+    }
+  },
   methods: {
     close () {
       this.$emit('close', true)
