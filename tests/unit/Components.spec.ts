@@ -32,15 +32,15 @@ describe('SimpleForm.vue', () => {
 
   it('emits amount value on form submit', async () => {
     const wrapper = mount(SimpleForm, {
-      data: () => {
-        return {
-          amount: 60000
-        }
-      },
     })
     const form = wrapper.find('.simple-form');
+    const input = wrapper.find('input');
+
+    (wrapper.find('.simple-form__input').element as HTMLInputElement).value = '60000';
+    input.trigger('input');
+
     await form.trigger('submit');
-    expect(wrapper.emitted().amountSelected[0][0]).toBe(60000)
+    expect(wrapper.emitted().amountSelected[0][0]).toBe('60000')
   })
 
   it('calls method when form submit', async () => {
